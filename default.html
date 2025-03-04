@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html>
+<HEAD>
+  <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+  <style>
+    /* 全局樣式 */
+body {
+    font-family: 'Arial', 'Noto Sans TC', sans-serif;
+    background-color: #f5f5f5;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    overflow-x: hidden;
+    width: 100%;
+}
+
+.calendar-container {
+    background: linear-gradient(135deg, #e0e8f0, #ffffff);
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    width: 600px;
+    max-width: 100%;
+    overflow-x: auto;
+}
+
+h1 {
+    text-align: center;
+    font-family: 'Pacifico', cursive;
+    color: #ffffff;
+    background: linear-gradient(90deg, #2c3e50, #3498db);
+    padding: 10px;
+    border-radius: 10px 10px 0 0;
+    margin: 0;
+    font-size: 1.7rem;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+th, td {
+    padding: 15px;
+    text-align: center;
+    border-bottom: 1px dashed #bdc3c7;
+    border-top: 1px dashed #bdc3c7;
+}
+
+th.date {
+    background-color: #2c3e50;
+    color: white;
+    font-weight: bold;
+    text-align: left;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+td.time {
+    background-color: #fef9e7;
+    color: #7f8c8d;
+}
+
+td.event-morning {
+    background-color: #fef9e7;
+    color: #e67e22;
+}
+
+td.event-sparring {
+    background-color: #eafaf1;
+    color: #27ae60;
+}
+
+td.event-kata {
+    background-color: #fce4d6;
+    color: #d35400;
+}
+
+td.event-out {
+    background-color: #23b98d;
+    color: white;
+}
+
+tr.past {
+    display: none;
+}
+
+tr:last-child td {
+    border-bottom: none;
+}
+
+.highlight {
+    color: red;
+    display: inline;
+}
+
+.back-to-top {
+    position: fixed;
+    bottom: 50px;
+    right: 20px;
+    background: #3498db;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    font-size: 14px;
+    cursor: pointer;
+    display: none;
+    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
+    transition: opacity 0.3s ease-in-out;
+}
+
+.back-to-top:hover {
+    background: #2980b9;
+}
+
+/* 保持原有的 CSS 結構，只修改手機版的部分 */
+
+@media (max-width: 768px) {
+  h1{font-size:1.2rem;}
+    .calendar-container {
+        padding: 1rem; /* 減少外距 */
+    }
+
+    table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+    }
+
+    .date-group {
+        margin-bottom: 10px;
+    }
+
+    tr {
+        display: flex; /* 改為 flex 布局 */
+        flex-wrap: wrap; /* 允許文字換行 */
+        gap: 5px; /* 保持間距 */
+        border: 1px solid #ddd;
+        padding: 10px;
+        background-color: white;
+        border-radius: 10px;
+    }
+
+    th, td {
+        display: flex; /* 確保內容可水平排列 */
+        align-items: center; /* 垂直居中 */
+        padding: 8px; /* 減少內距 */
+        border-bottom: none;
+      border-top:none;
+        width: 100%; /* 確保每個欄位初始佔滿一行 */
+    }
+
+    /* 移除日期行的 data-label 前綴（如果不需要） */
+    th.date[data-label]:before {
+        content: none;
+    }
+
+    td[data-label]:before {
+        content: attr(data-label) ": "; /* 保持標籤提示 */
+        font-weight: bold;
+        color: #333;
+        min-width: 60px; /* 縮短標籤寬度以節省空間 */
+        flex-shrink: 0; /* 防止標籤被壓縮 */
+    }
+
+    th.date {
+        background-color: #2c3e50 !important;
+        color: white !important;
+        font-weight: bold;
+        padding: 10px;
+        border-radius: 8px;
+        text-align: center;
+        font-size: 16px; /* 縮小字體 */
+        cursor: pointer;
+        width: 100%; /* 確保日期行佔滿 */
+    }
+
+    td {
+        background: #f5f5f5; /* 統一背景色，簡化設計 */
+        border-radius: 4px; /* 減小圓角 */
+        font-size: 14px; /* 縮小文字 */
+    }
+
+    .highlight {
+        color: red;
+        font-weight: bold;
+    }
+
+    th:empty {
+        display: none;
+    }
+
+    .back-to-top {
+        font-size: 0.7rem;
+        padding: 0.25rem;
+        display: block;
+        right: 0;
+        opacity: 0.8;
+    }
+
+    .expandable-row {
+        display: none; /* 手機版預設隱藏可展開的行 */
+    }
+
+    .date-group.expanded .expandable-row {
+        display: flex; /* 展開時使用 flex 顯示 */
+        flex-wrap: wrap; /* 允許換行 */
+    }
+
+.toggle-btn {
+        cursor: pointer;
+        display: inline-block;
+        transition: transform 0.3s ease;
+        margin-left: 5px;
+        font-size: 12px;
+        color: white;
+    }
+
+    .expand-text {
+        font-size: 12px; /* 設置小字的大小 */
+        color: white; /* 與三角形同色 */
+        margin-left: 5px; /* 與三角形保持間距 */
+        display: inline; /* 預設顯示 */
+    }
+
+    .rotated {
+        transform: rotate(180deg);
+    }
+}
+  </style>
+</HEAD>
+  <body>
+<div class="calendar-container">
+        <h1>跆拳道集訓行事曆</h1>
+        <table>
+            <!-- 表格內容將由 JavaScript 動態生成 -->
+        </table>
+  
+<button id="backToTop" class="back-to-top">▲ TOP</button>
+
+    </div>
+    <script>
+      document.addEventListener('DOMContentLoaded', async function () {
+    const backToTopButton = document.getElementById("backToTop");
+    window.addEventListener("scroll", function () {
+        if (window.scrollY > 200) {
+            backToTopButton.style.display = "block";
+        } else {
+            backToTopButton.style.display = "none";
+        }
+    });
+
+    backToTopButton.addEventListener("click", function () {
+        window.scrollTo({
+            top: 0,
+            behavior: "smooth"
+        });
+    });
+
+    const csvUrl = "https://docs.google.com/spreadsheets/d/1tr4JmbDlLwvJ6dBdjYtTJ7D08d8US7k6BlKxpWuQKEo/gviz/tq?tqx=out:csv";
+    const response = await fetch(csvUrl);
+    const csvText = await response.text();
+
+    const rows = csvText
+        .trim()
+        .replace(/\r/g, "")
+        .split("\n")
+        .map(row => row.split(",").map(cell => cell.replace(/^"|"$/g, "").trim()));
+
+    if (rows.length < 2) return;
+
+    // 找出日期範圍（最早和最晚的月份）
+    let minDate = null;
+    let maxDate = null;
+    const now = new Date(); // 取得現在時間
+rows.slice(1).forEach((row) => {
+    const [date] = row;
+    if (date) { // 確保日期不為空
+        const eventDate = new Date(date);
+        const eventEndTime = new Date(eventDate);
+        eventEndTime.setHours(23, 59, 59, 999); // 設定當天 23:59 為活動結束時間
+
+        if (!isNaN(eventDate.getTime()) && eventEndTime >= now) { // 只考慮未過期活動
+            if (!minDate || eventDate < minDate) minDate = eventDate;
+            if (!maxDate || eventDate > maxDate) maxDate = eventDate;
+        }
+    }
+});
+    // 動態設置 <h1> 標題
+    const h1 = document.querySelector(".calendar-container h1");
+    const defaultTitle = "跆拳道集訓行事曆"; // 原始 HTML 的標題文字
+
+    if (minDate && maxDate) {
+        const startYear = minDate.getFullYear();
+        const startMonth = minDate.getMonth() + 1; // 月份從 0 開始，+1 轉為 1-12
+        const endYear = maxDate.getFullYear();
+        const endMonth = maxDate.getMonth() + 1;
+
+        if (startYear === endYear && startMonth === endMonth) {
+            // 如果只有單個月，顯示「年+月」
+            h1.innerHTML = `${startYear}年${startMonth}月<br>跆拳道集訓行事曆`;
+        } else if (startYear === endYear) {
+            // 如果同一年不同月，顯示「年+起月-終月」
+            h1.innerHTML = `${startYear}年${startMonth}月-${endMonth}月<br>跆拳道集訓行事曆`;
+        } else {
+            // 如果跨年，顯示「起年+起月-終年+終月」（根據需求可能較少見）
+            h1.innerHTML = `${startYear}年${startMonth}月-${endYear}年${endMonth}月<br>跆拳道集訓行事曆`;
+        }
+    } else {
+        // 如果沒有有效日期，保持原始 HTML 的標題文字
+        h1.innerHTML = defaultTitle;
+    }
+
+    // 其他原有的表格生成邏輯保持不變
+    const table = document.querySelector("table");
+    let currentDateHeader = null;
+    let currentDateRow = null;
+    let nearestDateRow = null;
+    let minDateDiff = Infinity;    
+    const today = now.toISOString().split("T")[0].replace(/-/g, "/");
+    rows.slice(1).forEach((row, index) => {
+        const [date, time, event, type] = row;
+
+        const eventDate = new Date(date);
+        const eventEndTime = new Date(eventDate);
+        eventEndTime.setHours(23, 59, 59, 999);
+        const isPast = eventEndTime < now;
+
+        if (isPast) return;
+
+        const rowElement = document.createElement("tr");
+
+        if (!currentDateHeader || currentDateHeader !== date) {
+            if (currentDateRow) {
+                table.appendChild(currentDateRow);
+            }
+
+            currentDateHeader = date;
+            currentDateRow = document.createElement("tbody");
+            currentDateRow.classList.add("date-group");
+
+            const dateCell = document.createElement("th");
+            dateCell.classList.add("date");
+            if (window.innerWidth <= 768) { // 僅在手機版添加三角形和小字
+                dateCell.innerHTML = `${date} (${getWeekday(date)})<span class="toggle-btn">▼</span><span class="expand-text">(點我展開)</span>`;
+            } else {
+                dateCell.textContent = `${date} (${getWeekday(date)})`; // 桌面版不顯示三角形和小字
+            }
+            rowElement.appendChild(dateCell);
+
+            const dateDiff = Math.abs(new Date(date) - now);
+            if (dateDiff < minDateDiff) {
+                minDateDiff = dateDiff;
+                nearestDateRow = currentDateRow;
+            }
+        } else {
+            rowElement.classList.add("expandable-row"); // 所有非日期行的 tr 添加 expandable-row
+            rowElement.appendChild(document.createElement("th"));
+        }
+
+        const timeCell = document.createElement("td");
+        timeCell.classList.add("time");
+        if (window.innerWidth <= 768) {
+            timeCell.classList.add("expandable-row"); // 確保手機版可展開
+        }
+        timeCell.innerHTML = highlightChanges(time); // 保持原有的高亮處理
+        timeCell.setAttribute("data-content", highlightChanges(time)); // 設置實際內容
+        rowElement.appendChild(timeCell);
+
+        const eventCell = document.createElement("td");
+        eventCell.classList.add(`event-${type}`);
+        if (window.innerWidth <= 768) {
+            eventCell.classList.add("expandable-row"); // 確保手機版可展開
+        }
+        eventCell.textContent = event;
+        eventCell.setAttribute("data-content", event); // 設置實際內容
+        rowElement.appendChild(eventCell);
+
+        currentDateRow.appendChild(rowElement);
+
+        if (index === rows.length - 2) {
+            table.appendChild(currentDateRow);
+        }
+    });
+
+    addDataLabelsToTable(table);
+
+    // 手機版展開/收合功能
+    if (window.innerWidth <= 768) {
+        const dateHeaders = table.querySelectorAll("th.date");
+        dateHeaders.forEach(header => {
+            const toggleBtn = header.querySelector(".toggle-btn");
+            const expandText = header.querySelector(".expand-text");
+
+            header.addEventListener("click", function(e) {
+                e.preventDefault();
+                const tbody = this.closest(".date-group");
+
+                tbody.classList.toggle("expanded");
+                toggleBtn.classList.toggle("rotated");
+
+                // 點擊後隱藏「(點我展開)」文字
+                if (expandText) {
+                    expandText.style.display = tbody.classList.contains("expanded") ? "none" : "inline";
+                }
+            });
+        });
+
+        // 預設展開最接近的日期
+        if (nearestDateRow) {
+            nearestDateRow.classList.add("expanded");
+            const toggleBtn = nearestDateRow.querySelector(".toggle-btn");
+            const expandText = nearestDateRow.querySelector(".expand-text");
+            if (toggleBtn) toggleBtn.classList.add("rotated");
+            if (expandText) expandText.style.display = "none"; // 預設展開時隱藏文字
+        }
+    }
+});
+
+function getWeekday(dateStr) {
+    const weekdays = ["日", "一", "二", "三", "四", "五", "六"];
+    const date = new Date(dateStr);
+    return weekdays[date.getDay()];
+}
+
+function highlightChanges(text) {
+    return text.replace(/\*(.*?)\)/g, '<span class="highlight">*$1)</span>');
+}
+
+function addDataLabelsToTable(table) {
+    const headers = ["日期", "時間", "活動"];
+    const rows = table.querySelectorAll("tr");
+
+    rows.forEach((row) => {
+        const cells = row.querySelectorAll("th, td");
+        cells.forEach((cell, index) => {
+            if (headers[index]) {
+                cell.setAttribute("data-label", headers[index]);
+            }
+        });
+    });
+}
+    </script>
+    </body>
+</html>
+    
