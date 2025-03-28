@@ -245,21 +245,14 @@ tr:last-child td {
 
     </div>
     <script>
-      document.addEventListener('DOMContentLoaded', async function () {
+document.addEventListener('DOMContentLoaded', async function () {
     const backToTopButton = document.getElementById("backToTop");
     window.addEventListener("scroll", function () {
-        if (window.scrollY > 200) {
-            backToTopButton.style.display = "block";
-        } else {
-            backToTopButton.style.display = "none";
-        }
+        backToTopButton.style.display = window.scrollY > 200 ? "block" : "none";
     });
 
     backToTopButton.addEventListener("click", function () {
-        window.scrollTo({
-            top: 0,
-            behavior: "smooth"
-        });
+        window.scrollTo({ top: 0, behavior: "smooth" });
     });
 
     const csvUrl = "https://docs.google.com/spreadsheets/d/1tr4JmbDlLwvJ6dBdjYtTJ7D08d8US7k6BlKxpWuQKEo/gviz/tq?tqx=out:csv";
@@ -274,56 +267,55 @@ tr:last-child td {
 
     if (rows.length < 2) return;
 
-    // 找出日期範圍（最早和最晚的月份）
     let minDate = null;
     let maxDate = null;
-    const now = new Date(); // 取得現在時間
-rows.slice(1).forEach((row) => {
-    const [date] = row;
-    if (date) { // 確保日期不為空
-        const eventDate = new Date(date);
-        const eventEndTime = new Date(eventDate);
-        eventEndTime.setHours(23, 59, 59, 999); // 設定當天 23:59 為活動結束時間
+    const now = new Date();
+    let hasUpcomingEvents = false;  // 用來確認是否有未來的活動
 
-        if (!isNaN(eventDate.getTime()) && eventEndTime >= now) { // 只考慮未過期活動
-            if (!minDate || eventDate < minDate) minDate = eventDate;
-            if (!maxDate || eventDate > maxDate) maxDate = eventDate;
+    rows.slice(1).forEach((row) => {
+        const [date] = row;
+        if (date) {
+            const eventDate = new Date(date);
+            const eventEndTime = new Date(eventDate);
+            eventEndTime.setHours(23, 59, 59, 999);
+
+            if (!isNaN(eventDate.getTime()) && eventEndTime >= now) {
+                hasUpcomingEvents = true;
+                if (!minDate || eventDate < minDate) minDate = eventDate;
+                if (!maxDate || eventDate > maxDate) maxDate = eventDate;
+            }
         }
-    }
-});
-    // 動態設置 <h1> 標題
+    });
+
     const h1 = document.querySelector(".calendar-container h1");
-    const defaultTitle = "跆拳道集訓行事曆"; // 原始 HTML 的標題文字
+    const defaultTitle = "跆拳道集訓行事曆";
 
     if (minDate && maxDate) {
         const startYear = minDate.getFullYear();
-        const startMonth = minDate.getMonth() + 1; // 月份從 0 開始，+1 轉為 1-12
+        const startMonth = minDate.getMonth() + 1;
         const endYear = maxDate.getFullYear();
         const endMonth = maxDate.getMonth() + 1;
 
         if (startYear === endYear && startMonth === endMonth) {
-            // 如果只有單個月，顯示「年+月」
             h1.innerHTML = `${startYear}年${startMonth}月<br>跆拳道集訓行事曆`;
         } else if (startYear === endYear) {
-            // 如果同一年不同月，顯示「年+起月-終月」
             h1.innerHTML = `${startYear}年${startMonth}月-${endMonth}月<br>跆拳道集訓行事曆`;
         } else {
-            // 如果跨年，顯示「起年+起月-終年+終月」（根據需求可能較少見）
             h1.innerHTML = `${startYear}年${startMonth}月-${endYear}年${endMonth}月<br>跆拳道集訓行事曆`;
         }
     } else {
-        // 如果沒有有效日期，保持原始 HTML 的標題文字
         h1.innerHTML = defaultTitle;
     }
 
-    // 其他原有的表格生成邏輯保持不變
     const table = document.querySelector("table");
+    table.innerHTML = ""; // 清空表格內容
+
     let currentDateHeader = null;
     let currentDateRow = null;
     let nearestDateRow = null;
-    let minDateDiff = Infinity;    
-    const today = now.toISOString().split("T")[0].replace(/-/g, "/");
-    rows.slice(1).forEach((row, index) => {
+    let minDateDiff = Infinity;
+
+    rows.slice(1).forEach((row) => {
         const [date, time, event, type] = row;
 
         const eventDate = new Date(date);
@@ -346,10 +338,10 @@ rows.slice(1).forEach((row) => {
 
             const dateCell = document.createElement("th");
             dateCell.classList.add("date");
-            if (window.innerWidth <= 768) { // 僅在手機版添加三角形和小字
+            if (window.innerWidth <= 768) {
                 dateCell.innerHTML = `${date} (${getWeekday(date)})<span class="toggle-btn">▼</span><span class="expand-text">(點我展開)</span>`;
             } else {
-                dateCell.textContent = `${date} (${getWeekday(date)})`; // 桌面版不顯示三角形和小字
+                dateCell.textContent = `${date} (${getWeekday(date)})`;
             }
             rowElement.appendChild(dateCell);
 
@@ -359,65 +351,51 @@ rows.slice(1).forEach((row) => {
                 nearestDateRow = currentDateRow;
             }
         } else {
-            rowElement.classList.add("expandable-row"); // 所有非日期行的 tr 添加 expandable-row
+            rowElement.classList.add("expandable-row");
             rowElement.appendChild(document.createElement("th"));
         }
 
         const timeCell = document.createElement("td");
         timeCell.classList.add("time");
         if (window.innerWidth <= 768) {
-            timeCell.classList.add("expandable-row"); // 確保手機版可展開
+            timeCell.classList.add("expandable-row");
         }
-        timeCell.innerHTML = highlightChanges(time); // 保持原有的高亮處理
-        timeCell.setAttribute("data-content", highlightChanges(time)); // 設置實際內容
+        timeCell.innerHTML = highlightChanges(time);
+        timeCell.setAttribute("data-content", highlightChanges(time));
         rowElement.appendChild(timeCell);
 
         const eventCell = document.createElement("td");
         eventCell.classList.add(`event-${type}`);
         if (window.innerWidth <= 768) {
-            eventCell.classList.add("expandable-row"); // 確保手機版可展開
+            eventCell.classList.add("expandable-row");
         }
         eventCell.textContent = event;
-        eventCell.setAttribute("data-content", event); // 設置實際內容
+        eventCell.setAttribute("data-content", event);
         rowElement.appendChild(eventCell);
 
         currentDateRow.appendChild(rowElement);
 
-        if (index === rows.length - 2) {
-            table.appendChild(currentDateRow);
-        }
+        table.appendChild(currentDateRow);
     });
 
     addDataLabelsToTable(table);
 
-    // 手機版展開/收合功能
-    if (window.innerWidth <= 768) {
-        const dateHeaders = table.querySelectorAll("th.date");
-        dateHeaders.forEach(header => {
-            const toggleBtn = header.querySelector(".toggle-btn");
-            const expandText = header.querySelector(".expand-text");
-
-            header.addEventListener("click", function(e) {
-                e.preventDefault();
-                const tbody = this.closest(".date-group");
-
-                tbody.classList.toggle("expanded");
-                toggleBtn.classList.toggle("rotated");
-
-                // 點擊後隱藏「(點我展開)」文字
-                if (expandText) {
-                    expandText.style.display = tbody.classList.contains("expanded") ? "none" : "inline";
-                }
-            });
-        });
-
-        // 預設展開最接近的日期
-        if (nearestDateRow) {
+    if (!hasUpcomingEvents) {
+        // 如果沒有未來的活動，顯示「目前沒有任何計劃日」
+        const noEventsMessage = document.createElement("p");
+        noEventsMessage.textContent = "目前沒有任何計劃日";
+        noEventsMessage.style.textAlign = "center";
+        noEventsMessage.style.fontSize = "1.2em";
+        noEventsMessage.style.color = "#666";
+        table.parentNode.insertBefore(noEventsMessage, table);
+    } else {
+        // 手機版展開最近的日期
+        if (window.innerWidth <= 768 && nearestDateRow) {
             nearestDateRow.classList.add("expanded");
             const toggleBtn = nearestDateRow.querySelector(".toggle-btn");
             const expandText = nearestDateRow.querySelector(".expand-text");
             if (toggleBtn) toggleBtn.classList.add("rotated");
-            if (expandText) expandText.style.display = "none"; // 預設展開時隱藏文字
+            if (expandText) expandText.style.display = "none";
         }
     }
 });
@@ -445,6 +423,7 @@ function addDataLabelsToTable(table) {
         });
     });
 }
+
     </script>
     </body>
 </html>
