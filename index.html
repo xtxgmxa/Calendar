@@ -379,6 +379,21 @@ document.addEventListener('DOMContentLoaded', async function () {
     });
 
     addDataLabelsToTable(table);
+  document.querySelectorAll('th.date').forEach(dateHeader => {
+    dateHeader.addEventListener('click', function() {
+        const dateGroup = this.closest('.date-group');
+        dateGroup.classList.toggle('expanded');
+        const toggleBtn = this.querySelector('.toggle-btn');
+        const expandText = this.querySelector('.expand-text');
+        if (dateGroup.classList.contains('expanded')) {
+            toggleBtn.classList.add('rotated');
+            expandText.style.display = 'none';
+        } else {
+            toggleBtn.classList.remove('rotated');
+            expandText.style.display = 'inline';
+        }
+    });
+});
 
     if (!hasUpcomingEvents) {
         // 如果沒有未來的活動，顯示「目前沒有任何計劃日」
