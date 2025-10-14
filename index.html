@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html>
 <HEAD>
@@ -5,237 +6,61 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
   <style>
-    /* 全局樣式 */
-body {
-    font-family: 'Arial', 'Noto Sans TC', sans-serif;
-    background-color: #f5f5f5;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    margin: 0;
-    overflow-x: hidden;
-    width: 100%;
-}
+body{font-family:'Arial','Noto Sans TC',sans-serif;background-color:#f5f5f5;display:flex;justify-content:center;align-items:center;min-height:100vh;margin:0;overflow-x:hidden;width:100%}
+.calendar-container{background:linear-gradient(135deg,#e0e8f0,#fff);padding:20px;border-radius:15px;box-shadow:0 8px 16px #0000001a;width:600px;max-width:100%;overflow-x:auto}
+h1{text-align:center;font-family:'Pacifico',cursive;color:#fff;background:linear-gradient(90deg,#2c3e50,#3498db);padding:10px;border-radius:10px 10px 0 0;margin:0;font-size:1.7rem}
+table{width:100%;border-collapse:collapse;margin-top:10px}
+th,td{padding:15px;text-align:center;border-bottom:1px dashed #bdc3c7;border-top:1px dashed #bdc3c7}
+th.date{background-color:#2c3e50;color:#fff;font-weight:700;text-align:left;text-shadow:1px 1px 2px #0003}
+td.time{background-color:#fef9e7;color:#7f8c8d}
+td.event-morning{background-color:#fef9e7;color:#e67e22}
+td.event-sparring{background-color:#eafaf1;color:#27ae60}
+td.event-kata{background-color:#fce4d6;color:#d35400}
+td.event-out{background-color:#23b98d;color:#fff}
+tr.past{display:none}
+tr:last-child td{border-bottom:none}
+.highlight{color:red;display:inline}
+.back-to-top{position:fixed;bottom:50px;right:20px;background:#3498db;color:#fff;border:none;padding:10px 15px;border-radius:5px;font-size:14px;cursor:pointer;display:none;box-shadow:2px 2px 10px #0003;transition:opacity .3s ease-in-out}
+.back-to-top:hover{background:#2980b9}
 
-.calendar-container {
-    background: linear-gradient(135deg, #e0e8f0, #ffffff);
-    padding: 20px;
-    border-radius: 15px;
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
-    width: 600px;
-    max-width: 100%;
-    overflow-x: auto;
-}
-
-h1 {
-    text-align: center;
-    font-family: 'Pacifico', cursive;
-    color: #ffffff;
-    background: linear-gradient(90deg, #2c3e50, #3498db);
-    padding: 10px;
-    border-radius: 10px 10px 0 0;
-    margin: 0;
-    font-size: 1.7rem;
-}
-
-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 10px;
-}
-
-th, td {
-    padding: 15px;
-    text-align: center;
-    border-bottom: 1px dashed #bdc3c7;
-    border-top: 1px dashed #bdc3c7;
-}
-
-th.date {
-    background-color: #2c3e50;
-    color: white;
-    font-weight: bold;
-    text-align: left;
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
-}
-
-td.time {
-    background-color: #fef9e7;
-    color: #7f8c8d;
-}
-
-td.event-morning {
-    background-color: #fef9e7;
-    color: #e67e22;
-}
-
-td.event-sparring {
-    background-color: #eafaf1;
-    color: #27ae60;
-}
-
-td.event-kata {
-    background-color: #fce4d6;
-    color: #d35400;
-}
-
-td.event-out {
-    background-color: #23b98d;
-    color: white;
-}
-
-tr.past {
-    display: none;
-}
-
-tr:last-child td {
-    border-bottom: none;
-}
-
-.highlight {
-    color: red;
-    display: inline;
-}
-
-.back-to-top {
-    position: fixed;
-    bottom: 50px;
-    right: 20px;
-    background: #3498db;
-    color: white;
-    border: none;
-    padding: 10px 15px;
-    border-radius: 5px;
-    font-size: 14px;
-    cursor: pointer;
-    display: none;
-    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
-    transition: opacity 0.3s ease-in-out;
-}
-
-.back-to-top:hover {
-    background: #2980b9;
-}
-
-/* 保持原有的 CSS 結構，只修改手機版的部分 */
+#auth-container{background:linear-gradient(135deg,#e0e8f0,#fff);padding:2rem;border-radius:15px;box-shadow:0 8px 16px #0000001a;width:600px;max-width:90%;margin:3rem auto;font-family:'Arial','Noto Sans TC',sans-serif;text-align:center}
+#auth-container h1{font-family:'Pacifico',cursive;font-size:1.7rem;color:#fff;background:linear-gradient(90deg,#2c3e50,#3498db);padding:10px;border-radius:10px;margin-bottom:1.5rem;box-shadow:0 4px 8px #0000001a}
+#passwordInput{padding:.75rem;font-size:1rem;border:1px solid #bdc3c7;border-radius:8px;width:60%;max-width:300px;box-shadow:inset 0 2px 4px #0000000d}
+button[onclick="checkPassword()"]{padding:.75rem 1.2rem;margin-left:.5rem;font-size:1rem;background-color:#3498db;color:#fff;border:none;border-radius:8px;cursor:pointer;box-shadow:2px 2px 10px #0000001a;transition:background-color .3s ease}
+button[onclick="checkPassword()"]:hover{background-color:#2980b9}
+#errorMsg{margin-top:1rem;color:#e74c3c;font-weight:700;font-size:1rem}
 
 @media (max-width: 768px) {
-  h1{font-size:1.2rem;}
-    .calendar-container {
-        padding: 1rem; /* 減少外距 */
-    }
-
-    table {
-        width: 100%;
-        border-collapse: separate;
-        border-spacing: 0;
-    }
-
-    .date-group {
-        margin-bottom: 10px;
-    }
-
-    tr {
-        display: flex; /* 改為 flex 布局 */
-        flex-wrap: wrap; /* 允許文字換行 */
-        gap: 5px; /* 保持間距 */
-        border: 1px solid #ddd;
-        padding: 10px;
-        background-color: white;
-        border-radius: 10px;
-    }
-
-    th, td {
-        display: flex; /* 確保內容可水平排列 */
-        align-items: center; /* 垂直居中 */
-        padding: 8px; /* 減少內距 */
-        border-bottom: none;
-      border-top:none;
-        width: 100%; /* 確保每個欄位初始佔滿一行 */
-    }
-
-    /* 移除日期行的 data-label 前綴（如果不需要） */
-    th.date[data-label]:before {
-        content: none;
-    }
-
-    td[data-label]:before {
-        content: attr(data-label) ": "; /* 保持標籤提示 */
-        font-weight: bold;
-        color: #333;
-        min-width: 60px; /* 縮短標籤寬度以節省空間 */
-        flex-shrink: 0; /* 防止標籤被壓縮 */
-    }
-
-    th.date {
-        background-color: #2c3e50 !important;
-        color: white !important;
-        font-weight: bold;
-        padding: 10px;
-        border-radius: 8px;
-        text-align: center;
-        font-size: 16px; /* 縮小字體 */
-        cursor: pointer;
-        width: 100%; /* 確保日期行佔滿 */
-    }
-
-    td {
-        background: #f5f5f5; /* 統一背景色，簡化設計 */
-        border-radius: 4px; /* 減小圓角 */
-        font-size: 14px; /* 縮小文字 */
-    }
-
-    .highlight {
-        color: red;
-        font-weight: bold;
-    }
-
-    th:empty {
-        display: none;
-    }
-
-    .back-to-top {
-        font-size: 0.7rem;
-        padding: 0.25rem;
-        display: block;
-        right: 0;
-        opacity: 0.8;
-    }
-
-    .expandable-row {
-        display: none; /* 手機版預設隱藏可展開的行 */
-    }
-
-    .date-group.expanded .expandable-row {
-        display: flex; /* 展開時使用 flex 顯示 */
-        flex-wrap: wrap; /* 允許換行 */
-    }
-
-.toggle-btn {
-        cursor: pointer;
-        display: inline-block;
-        transition: transform 0.3s ease;
-        margin-left: 5px;
-        font-size: 12px;
-        color: white;
-    }
-
-    .expand-text {
-        font-size: 12px; /* 設置小字的大小 */
-        color: white; /* 與三角形同色 */
-        margin-left: 5px; /* 與三角形保持間距 */
-        display: inline; /* 預設顯示 */
-    }
-
-    .rotated {
-        transform: rotate(180deg);
-    }
+h1{font-size:1.2rem}
+.calendar-container{padding:1rem}
+table{width:100%;border-collapse:separate;border-spacing:0}
+.date-group{margin-bottom:10px}
+tr{display:flex;flex-wrap:wrap;gap:5px;border:1px solid #ddd;padding:10px;background-color:#fff;border-radius:10px}
+th,td{display:flex;align-items:center;padding:8px;border-bottom:none;border-top:none;width:100%}
+th.date[data-label]:before{content:none}
+td[data-label]:before{content:attr(data-label) ": ";font-weight:700;color:#333;min-width:60px;flex-shrink:0}
+th.date{background-color:#2c3e50!important;color:#fff!important;font-weight:700;padding:10px;border-radius:8px;text-align:center;font-size:16px;cursor:pointer;width:100%}
+td{background:#f5f5f5;border-radius:4px;font-size:14px}
+.highlight{color:red;font-weight:700}
+th:empty{display:none}
+.back-to-top{font-size:.7rem;padding:.25rem;display:block;right:0;opacity:.8}
+.expandable-row{display:none}
+.date-group.expanded .expandable-row{display:flex;flex-wrap:wrap}
+.toggle-btn{cursor:pointer;display:inline-block;transition:transform .3s ease;margin-left:5px;font-size:12px;color:#fff}
+.expand-text{font-size:12px;color:#fff;margin-left:5px;display:inline}
+.rotated{transform:rotate(180deg)}
 }
   </style>
 </HEAD>
   <body>
-<div class="calendar-container">
+    <div id="auth-container" style="text-align:center;padding:2rem;">
+        <h1>請輸入密碼以查看行事曆</h1>
+        <input type="password" id="passwordInput" placeholder="輸入密碼" style="padding:0.5rem;font-size:1rem;">
+        <button onclick="checkPassword()" style="padding:0.5rem 1rem;margin-left:0.5rem;">確認</button>
+        <p id="errorMsg" style="color:red;"></p>
+      </div>
+      
+<div class="calendar-container"  style="display:none;">
         <h1>跆拳道集訓行事曆</h1>
         <table>
             <!-- 表格內容將由 JavaScript 動態生成 -->
@@ -245,6 +70,24 @@ tr:last-child td {
 
     </div>
     <script>
+        function checkPassword() {
+  const input = document.getElementById("passwordInput").value;
+  const errorMsg = document.getElementById("errorMsg");
+  const correctHash = "4be29e012bd93c2f2436adc6749693880a5d946003afe7d3982c9badf9c55fba";
+
+  crypto.subtle.digest("SHA-256", new TextEncoder().encode(input)).then(hashBuffer => {
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+
+    if (hashHex === correctHash) {
+      document.getElementById("auth-container").style.display = "none";
+      document.querySelector(".calendar-container").style.display = "block";
+    } else {
+      errorMsg.textContent = "密碼錯誤，請再試一次。";
+    }
+  });
+}
+
 document.addEventListener('DOMContentLoaded', async function () {
     const backToTopButton = document.getElementById("backToTop");
     window.addEventListener("scroll", function () {
