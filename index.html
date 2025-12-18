@@ -92,6 +92,10 @@ th:empty{display:none}
 // }
 
 document.addEventListener('DOMContentLoaded', async function () {
+  //關閉密碼start
+  document.getElementById("auth-container").style.display = "none";
+    document.querySelector(".calendar-container").style.display = "block";
+  //關閉密碼END
     const backToTopButton = document.getElementById("backToTop");
     window.addEventListener("scroll", function () {
         backToTopButton.style.display = window.scrollY > 200 ? "block" : "none";
