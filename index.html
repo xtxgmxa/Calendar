@@ -73,23 +73,23 @@ th:empty{display:none}
 
     </div>
     <script>
-        function checkPassword() {
-  const input = document.getElementById("passwordInput").value;
-  const errorMsg = document.getElementById("errorMsg");
-  const correctHash = "4be29e012bd93c2f2436adc6749693880a5d946003afe7d3982c9badf9c55fba";
+//         function checkPassword() {
+//   const input = document.getElementById("passwordInput").value;
+//   const errorMsg = document.getElementById("errorMsg");
+//   const correctHash = "4be29e012bd93c2f2436adc6749693880a5d946003afe7d3982c9badf9c55fba";
 
-  crypto.subtle.digest("SHA-256", new TextEncoder().encode(input)).then(hashBuffer => {
-    const hashArray = Array.from(new Uint8Array(hashBuffer));
-    const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+//   crypto.subtle.digest("SHA-256", new TextEncoder().encode(input)).then(hashBuffer => {
+//     const hashArray = Array.from(new Uint8Array(hashBuffer));
+//     const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
 
-    if (hashHex === correctHash) {
-      document.getElementById("auth-container").style.display = "none";
-      document.querySelector(".calendar-container").style.display = "block";
-    } else {
-      errorMsg.textContent = "密碼錯誤，請再試一次。";
-    }
-  });
-}
+//     if (hashHex === correctHash) {
+//       document.getElementById("auth-container").style.display = "none";
+//       document.querySelector(".calendar-container").style.display = "block";
+//     } else {
+//       errorMsg.textContent = "密碼錯誤，請再試一次。";
+//     }
+//   });
+// }
 
 document.addEventListener('DOMContentLoaded', async function () {
     const backToTopButton = document.getElementById("backToTop");
