@@ -30,7 +30,9 @@ button[onclick="checkPassword()"]{padding:.75rem 1.2rem;margin-left:.5rem;font-s
 button[onclick="checkPassword()"]:hover{background-color:#2980b9}
 #errorMsg{margin-top:1rem;color:#e74c3c;font-weight:700;font-size:1rem}
 .note_pw{display: block;font-size: 1.0rem;font-weight: 900;margin: 1rem 0;color:#2c3e50;}
-
+.note{font-size: 1.0rem;text-align: center;background: red;color: white;padding:0.5rem 0 ;}
+.note_list li{text-align: left;list-style-position: inside;}
+.note_list span,.note span{color: yellow;}
 @media (max-width: 768px) {
 h1{font-size:1.2rem!important;}
 .calendar-container{padding:1rem}
@@ -65,6 +67,13 @@ th:empty{display:none}
       
 <div class="calendar-container"  style="display:none;">
         <h1>跆拳道集訓行事曆</h1>
+        <div class="note">
+            <strong>【公告注意】：4/8~5/6<span>每週三第2班</span>選手班都要到</strong>
+            <ul class="note_list">
+                <li>全少賽前，週一<span>對打</span>選手班都到<span>21:00</span></li>
+                <li>全少賽前，週二<span>品勢</span>選手班都到<span>21:00</span></li>
+            </ul>
+        </div>
         <table>
             <!-- 表格內容將由 JavaScript 動態生成 -->
         </table>
